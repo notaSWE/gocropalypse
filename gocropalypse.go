@@ -50,74 +50,74 @@ func parsePngChunk(stream io.Reader) (string, []byte, error) {
 }
 
 func validPngIend(trailer []byte) bool {
-	if len(trailer) < 12 {
-		return false
-	}
+  if len(trailer) < 12 {
+    return false
+  }
 
-	iendPos := len(trailer) - 8
-	iendSize := binary.BigEndian.Uint32(trailer[iendPos-4 : iendPos])
-	iendCsum := binary.BigEndian.Uint32(trailer[iendPos+4 : iendPos+8])
-	return iendSize == 0 && iendCsum == 0xAE426082
+  iendPos := len(trailer) - 8
+  iendSize := binary.BigEndian.Uint32(trailer[iendPos-4 : iendPos])
+  iendCsum := binary.BigEndian.Uint32(trailer[iendPos+4 : iendPos+8])
+  return iendSize == 0 && iendCsum == 0xAE426082
 }
 
 func parseJpeg(fIn io.Reader) ([]byte, error) {
-	SOI_MARKER := []byte{0xFF, 0xD8}
-	APP0_MARKER := []byte{0xFF, 0xE0}
+  SOI_MARKER := []byte{0xFF, 0xD8}
+  APP0_MARKER := []byte{0xFF, 0xE0}
 
-	// Read SOI marker
-	soiMarker := make([]byte, 2)
-	_, err := fIn.Read(soiMarker)
-	if err != nil {
-		return nil, err
-	}
-	if !bytes.Equal(soiMarker, SOI_MARKER) {
-		return nil, errors.New("invalid SOI marker")
-	}
+  // Read SOI marker
+  soiMarker := make([]byte, 2)
+  _, err := fIn.Read(soiMarker)
+  if err != nil {
+    return nil, err
+  }
+  if !bytes.Equal(soiMarker, SOI_MARKER) {
+    return nil, errors.New("invalid SOI marker")
+  }
 
-	// Read APP0 marker
-	app0Marker := make([]byte, 2)
-	_, err = fIn.Read(app0Marker)
-	if err != nil {
-		return nil, err
-	}
-	if !bytes.Equal(app0Marker, APP0_MARKER) {
-		return nil, nil
-	}
+  // Read APP0 marker
+  app0Marker := make([]byte, 2)
+  _, err = fIn.Read(app0Marker)
+  if err != nil {
+    return nil, err
+  }
+  if !bytes.Equal(app0Marker, APP0_MARKER) {
+    return nil, nil
+  }
 
-	// Read APP0 size
-	var app0Size uint16
-	err = binary.Read(fIn, binary.BigEndian, &app0Size)
-	if err != nil {
-		return nil, err
-	}
+  // Read APP0 size
+  var app0Size uint16
+  err = binary.Read(fIn, binary.BigEndian, &app0Size)
+  if err != nil {
+    return nil, err
+  }
 
-	// Read APP0 body
-	app0Body := make([]byte, app0Size-2)
-	_, err = fIn.Read(app0Body)
-	if err != nil {
-		return nil, err
-	}
-	if !bytes.Equal(app0Body[:4], []byte("JFIF")) {
-		return nil, errors.New("invalid JFIF signature")
-	}
+  // Read APP0 body
+  app0Body := make([]byte, app0Size-2)
+  _, err = fIn.Read(app0Body)
+  if err != nil {
+    return nil, err
+  }
+  if !bytes.Equal(app0Body[:4], []byte("JFIF")) {
+    return nil, errors.New("invalid JFIF signature")
+  }
 
-	fileContent, err := ioutil.ReadAll(fIn)
-	if err != nil {
-		return nil, err
-	}
+  fileContent, err := ioutil.ReadAll(fIn)
+  if err != nil {
+    return nil, err
+  }
 
-	eoiMarkerPos := bytes.Index(fileContent, []byte{0xFF, 0xD9})
-	if eoiMarkerPos == -1 {
-		return nil, errors.New("EOI marker not found")
-	}
+  eoiMarkerPos := bytes.Index(fileContent, []byte{0xFF, 0xD9})
+  if eoiMarkerPos == -1 {
+    return nil, errors.New("EOI marker not found")
+  }
 
-	trailer := fileContent[eoiMarkerPos+2:]
+  trailer := fileContent[eoiMarkerPos+2:]
 
-	if len(trailer) > 0 && bytes.Equal(trailer[len(trailer)-2:], []byte{0xFF, 0xD9}) {
-		return trailer, nil
-	}
+  if len(trailer) > 0 && bytes.Equal(trailer[len(trailer)-2:], []byte{0xFF, 0xD9}) {
+    return trailer, nil
+  }
 
-	return nil, nil
+  return nil, nil
 }
 
 func parsePng(f_in io.Reader) ([]byte, error) {
@@ -150,8 +150,8 @@ func parsePng(f_in io.Reader) ([]byte, error) {
 }
 
 func isConfirmedImgFile(file string) bool {
-	ext := strings.ToLower(filepath.Ext(file))
-	return ext == ".png" || ext == ".jpg"
+  ext := strings.ToLower(filepath.Ext(file))
+  return ext == ".png" || ext == ".jpg"
 }
 
 func appendConfirmedImgFiles(path string, confirmedPngFiles *[]string) error {
@@ -237,8 +237,8 @@ func main() {
     }
     f_in.Close()
   }
-	elapsedTime := time.Since(startTime)
+  elapsedTime := time.Since(startTime)
   formattedElapsedTime := fmt.Sprintf("%.5f", elapsedTime.Seconds())
   fmt.Printf("Found %d vulnerable images out of a scanned total of %d.\n", vulnCount, len(imgFiles))
-	fmt.Printf("Total time to execute: %s seconds\n", formattedElapsedTime)
+  fmt.Printf("Total time to execute: %s seconds\n", formattedElapsedTime)
 }
