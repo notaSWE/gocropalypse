@@ -1,3 +1,6 @@
+// Based on https://github.com/infobyte/CVE-2023-21036
+// Based on https://gist.github.com/DavidBuchanan314/93de9d07f7fab494bcdf17c2bd6cef02
+
 package main
 
 import (
