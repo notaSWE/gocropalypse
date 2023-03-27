@@ -74,7 +74,7 @@ func parseJpeg(fIn io.Reader) ([]byte, error) {
     return nil, err
   }
   if !bytes.Equal(soiMarker, SOI_MARKER) {
-    return nil, errors.New("invalid SOI marker")
+    return nil, nil
   }
 
   // Read APP0 marker
@@ -101,7 +101,7 @@ func parseJpeg(fIn io.Reader) ([]byte, error) {
     return nil, err
   }
   if !bytes.Equal(app0Body[:4], []byte("JFIF")) {
-    return nil, errors.New("invalid JFIF signature")
+    return nil, nil
   }
 
   fileContent, err := ioutil.ReadAll(fIn)
@@ -131,7 +131,7 @@ func parsePng(f_in io.Reader) ([]byte, error) {
   }
 
   if !bytes.Equal(magic, []byte(PNG_MAGIC)) {
-    return nil, fmt.Errorf("invalid PNG magic number")
+    return nil, fmt.Errorf("Invalid PNG magic number")
   }
 
   for {
